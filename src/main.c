@@ -71,7 +71,7 @@ void SensorsTask(void const * argument);
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
-static void *HTS221_H_0_handle  = NULL;
+void *HTS221_H_0_handle  = NULL;
 /* USER CODE END 0 */
 
 int main(void) {
@@ -97,7 +97,6 @@ int main(void) {
 
   osThreadDef(sensorsTask, SensorsTask, osPriorityNormal, 0, 228);
   sensorsTaskHandle = osThreadCreate(osThread(sensorsTask), NULL);
-
 
   /* Start scheduler */
   osKernelStart();
@@ -272,9 +271,6 @@ void MX_GPIO_Init(void)
 /* USER CODE END 4 */
 
 void SensorsTask(void const * argument) {
-	int32_t d1, d2;
-	uint8_t who_am_i;
-	float odr;
 	uint8_t id;
 	float humidity;
 	uint8_t status;

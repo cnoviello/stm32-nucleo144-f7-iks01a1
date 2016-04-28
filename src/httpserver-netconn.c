@@ -34,6 +34,7 @@
 #include "cmsis_os.h"
 #include "../webpages/index.h"
 #include "temp.h"
+#include "x_nucleo_iks01a1_humidity.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -91,8 +92,21 @@ void http_server_serve(struct netconn *conn)
     			  netconn_write(conn, (const unsigned char*)"OFF", 3, NETCONN_NOCOPY);
     	  }
     	  if (strncmp((char const *)buf,"GET /adc", 8) == 0) {
-    		  sprintf(buf, "%2.1f °C", getMCUTemperature());
-    		  netconn_write(conn, (const unsigned char*)buf, strlen(buf), NETCONN_NOCOPY);
+  			  uint8_t id;
+			  float humidity;
+			  uint8_t status;
+			  extern  void *HTS221_H_0_handle;
+
+    		  BSP_HUMIDITY_Get_Instance( HTS221_H_0_handle, &id );
+    		  BSP_HUMIDITY_IsInitialized( HTS221_H_0_handle, &status );
+
+    		  if ( status == 1 )
+    		  {
+    		    if ( BSP_HUMIDITY_Get_Hum( HTS221_H_0_handle, &humidity ) == COMPONENT_ERROR )
+    		    	humidity = 0.0f;
+				sprintf(buf, "Humidity: %f\r\n", humidity);
+	    		netconn_write(conn, (const unsigned char*)buf, strlen(buf), NETCONN_NOCOPY);
+    		  }
     	  }
       }
     }
